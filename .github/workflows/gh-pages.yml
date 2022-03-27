@@ -13,11 +13,10 @@ jobs:
         run: git submodule update --init --recursive
 
       - name: Setup Hugo 🔧
-        run: | 
-          sudo apt update
-          wget ${{ secrets.HUGO_RELEASE }} -O hugo.deb
-          sudo dpkg -i hugo.deb
-          sudo apt install -f
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.91.2'
+
       - name: Testing Hugo 🔧
         run: 'command -v hugo >/dev/null 2>&1 || { echo >&2 "Where is Hugo? Aborting."; exit 1; }'
 

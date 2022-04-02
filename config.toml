@@ -1,5 +1,5 @@
 baseURL = 'https://pitagoras3.github.io'
-title = "Website Name"
+title = "Szymek's programming"
 theme = "etch"
 languageCode = "en-US"
 enableInlineShortcodes = true
@@ -8,7 +8,7 @@ pygmentsUseClasses = true
 
 [params]
   description = "Description"
-  copyright = "Copyright © 2020 Szymon Marcinkiewicz"
+  copyright = "Copyright © 2022 Szymon Marcinkiewicz"
   dark = "auto"
   highlight = true
 

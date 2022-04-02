@@ -2,16 +2,16 @@
 
 Sources for my small programming blog available on [pitagoras3.github.io](https://pitagoras3.github.io). 
 
-This blog is based on [Hugo framework](https://gohugo.io) using [etch](https://github.com/LukasJoswiak/etch) theme.
+This blog is based on [Hugo framework](https://gohugo.io) using [etch theme](https://github.com/LukasJoswiak/etch).
 
-To publish new post on blog just push commit to main branch. Flow of deployment is:
+To publish new post on blog just push changes to `main` branch. After that, GitHub action builds static pages and commits them to `gh-pages` branch. From there, they're available via GitHub Pages on [pitagoras3.github.io](https://pitagoras3.github.io).
 
 ```mermaid
 flowchart LR
     id1([main branch]) --> id2([GitHub action]) --static pages--> id3([gh-pages branch])
 ```
 
-To run Hugo locally with fast render mode use command: 
+You can run this blog locally with Hugo using fast render mode by command: 
 ```
 hugo server
 ```

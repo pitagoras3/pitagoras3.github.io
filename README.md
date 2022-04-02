@@ -15,3 +15,11 @@ You can run this blog locally with Hugo using fast render mode by command:
 ```
 hugo server
 ```
+
+___
+
+###### Favicon licence
+
+```
+Twemoji graphics made by Twitter and other contributors, licensed under CC-BY 4.0: https://creativecommons.org/licenses/by/4.0/
+```

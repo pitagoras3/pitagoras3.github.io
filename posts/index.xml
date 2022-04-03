@@ -1,7 +1,56 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Szymek's programming</title><link>https://pitagoras3.github.io/posts/</link><description>Recent content in Posts on Szymek's programming</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sun, 27 Mar 2022 22:43:16 +0200</lastBuildDate><atom:link href="https://pitagoras3.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>My First Post</title><link>https://pitagoras3.github.io/my-first-post/</link><pubDate>Sun, 27 Mar 2022 22:43:16 +0200</pubDate><guid>https://pitagoras3.github.io/my-first-post/</guid><description>&lt;h1 id="hello-world">Hello, world!&lt;/h1>
-&lt;p>Lorem ipsum&lt;/p>
-&lt;h2 id="code-sample">Code sample&lt;/h2>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span class="k">fun&lt;/span> &lt;span class="nf">main&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;span class="n">println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;Hello, world!&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Szymek's programming</title><link>https://pitagoras3.github.io/posts/</link><description>Recent content in Posts on Szymek's programming</description><generator>Hugo -- gohugo.io</generator><language>en-US</language><lastBuildDate>Sun, 03 Apr 2022 22:00:00 +0200</lastBuildDate><atom:link href="https://pitagoras3.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>#1: Testing Kotlin with Spock - final drawbacks</title><link>https://pitagoras3.github.io/kotlin-spock-testing/</link><pubDate>Sun, 03 Apr 2022 22:00:00 +0200</pubDate><guid>https://pitagoras3.github.io/kotlin-spock-testing/</guid><description>&lt;p>Last time when I was writing unit tests in Spock for Kotlin application, I&amp;rsquo;ve faced interesting problem.&lt;/p>
+&lt;p>Take a look at the example below - I&amp;rsquo;ve declared function &lt;code>test&lt;/code> which returns &lt;code>false&lt;/code>, but in test I&amp;rsquo;ve mocked it to return &lt;code>true&lt;/code>.&lt;/p>
+&lt;p>&lt;strong>Application code:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span class="k">class&lt;/span> &lt;span class="nc">KotlinClass&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="k">fun&lt;/span> &lt;span class="nf">test&lt;/span>&lt;span class="p">():&lt;/span> &lt;span class="n">Boolean&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;span class="n">println&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;Executing KotlinClass.test method...&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;span class="k">return&lt;/span> &lt;span class="k">false&lt;/span>
 &lt;span class="p">}&lt;/span>
-&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>
+&lt;span class="p">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>&lt;strong>Testing code:&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-groovy" data-lang="groovy">&lt;span class="kt">def&lt;/span> &lt;span class="s1">&amp;#39;test mock in kotlin&amp;#39;&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;span class="nl">when:&lt;/span>
+&lt;span class="kt">def&lt;/span> &lt;span class="n">kotlin&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">Mock&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">KotlinClass&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;span class="n">kotlin&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">test&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">&amp;gt;&amp;gt;&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="c1">// Declare that mock should return true
+&lt;/span>&lt;span class="c1">&lt;/span>
+&lt;span class="nl">then:&lt;/span>
+&lt;span class="kt">def&lt;/span> &lt;span class="n">result&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">kotlin&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">test&lt;/span>&lt;span class="o">()&lt;/span>
+&lt;span class="n">result&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="c1">// Verify that calling mock results in true
+&lt;/span>&lt;span class="c1">&lt;/span>&lt;span class="o">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>Running this test failed with error message:&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;code>Cannot create mock for class KotlinClass because Java mocks cannot mock final classes. If the code under test is written in Groovy, use a Groovy mock.&lt;/code>&lt;/p>
+&lt;/blockquote>
+&lt;p>Reason for that is because &lt;a href="https://kotlinlang.org/docs/inheritance.html">in Kotlin all classes are final by default&lt;/a>.
+Fix for this issue was very quick, I&amp;rsquo;ve just had to add &lt;code>open&lt;/code> modifier before &lt;code>class&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span class="k">open&lt;/span> &lt;span class="k">class&lt;/span> &lt;span class="nc">KotlinClass&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>But after applying that fix, strange thing happened. Running test resulted in yet another error:&lt;/p>
+&lt;pre tabindex="0">&lt;code>Executing real KotlinClass.test method
+Condition not satisfied:
+result == true
+| |
+false false
+&lt;/code>&lt;/pre>&lt;p>Take a look at the first line of the result - it says &lt;code>Executing real KotlinClass.test method&lt;/code>!
+It occurs that Spock had not mocked our &lt;code>test&lt;/code> method, despite explicit declaration via:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-groovy" data-lang="groovy">&lt;span class="kt">def&lt;/span> &lt;span class="n">kotlin&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">Mock&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">KotlinClass&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;span class="n">kotlin&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">test&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">&amp;gt;&amp;gt;&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="c1">// Declare that mock should return true
+&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="but-why">But why?&lt;/h3>
+&lt;p>&lt;a href="https://kotlinlang.org/docs/inheritance.html#overriding-methods">In Kotlin, all methods are final by default&lt;/a>. Spock is unable to create Mock or Stub on &lt;code>final&lt;/code> class or method.&lt;/p>
+&lt;h3 id="how-can-i-solve-this">How can I solve this?&lt;/h3>
+&lt;p>No-brainer solution is same as in case of &lt;code>final class&lt;/code> - you can just use &lt;code>open&lt;/code> modifier before function itself:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-kotlin" data-lang="kotlin">&lt;span class="k">open&lt;/span> &lt;span class="k">fun&lt;/span> &lt;span class="nf">test&lt;/span>&lt;span class="p">():&lt;/span> &lt;span class="n">Boolean&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>But if you don&amp;rsquo;t want your Spock tests to affect application code itself (&lt;em>you really shouldn&amp;rsquo;t want it&lt;/em>), you can use &lt;a href="https://github.com/joke/spock-mockable">spock-mockable&lt;/a> as it allows creating Stubs and Mocks on final (and even private) classes or methods.
+After adding &lt;code>spock-mockable&lt;/code> dependency apply &lt;code>@Mockable&lt;/code> annotation on Spock specification with &lt;em>&amp;ldquo;problematic&amp;rdquo;&lt;/em> class as argument.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-groovy" data-lang="groovy">&lt;span class="nd">@Mockable&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">KotlinClass&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;span class="kd">class&lt;/span> &lt;span class="nc">SpockTest&lt;/span> &lt;span class="kd">extends&lt;/span> &lt;span class="n">Specification&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;span class="kt">def&lt;/span> &lt;span class="s1">&amp;#39;test mock in kotlin&amp;#39;&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
+&lt;span class="nl">when:&lt;/span>
+&lt;span class="kt">def&lt;/span> &lt;span class="n">kotlin&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">Mock&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="n">KotlinClass&lt;/span>&lt;span class="o">)&lt;/span>
+&lt;span class="n">kotlin&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">test&lt;/span>&lt;span class="o">()&lt;/span> &lt;span class="o">&amp;gt;&amp;gt;&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="c1">// Declare that mock should return true
+&lt;/span>&lt;span class="c1">&lt;/span>
+&lt;span class="nl">then:&lt;/span>
+&lt;span class="kt">def&lt;/span> &lt;span class="n">result&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">kotlin&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="na">test&lt;/span>&lt;span class="o">()&lt;/span>
+&lt;span class="n">result&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="c1">// Verify that calling mock results in true
+&lt;/span>&lt;span class="c1">&lt;/span> &lt;span class="o">}&lt;/span>
+&lt;span class="o">}&lt;/span>
+&lt;/code>&lt;/pre>&lt;/div>&lt;p>Doing so, you keep your code untouched (without any &lt;code>open&lt;/code> modifier on class or method).&lt;/p></description></item></channel></rss>

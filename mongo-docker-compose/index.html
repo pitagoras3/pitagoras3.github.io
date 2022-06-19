@@ -1,0 +1,192 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Description">
+<link rel="shortcut icon" href=https://pitagoras3.github.io/favicon.ico>
+<link rel=stylesheet href=/css/style.min.css>
+<title>#2: MongoDB on docker-compose - standalone || sharded || replicaSet</title>
+</head>
+<body><header id=banner>
+<h2><a href=https://pitagoras3.github.io>Szymek's programming</a></h2>
+<nav>
+<ul>
+<li>
+<a href=/ title=posts>posts</a>
+</li><li>
+<a href=/about/ title=about>about</a>
+</li>
+</ul>
+</nav>
+</header>
+<main id=content>
+<article>
+<header id=post-header>
+<h1>#2: MongoDB on docker-compose - standalone || sharded || replicaSet</h1>
+<div>
+<time>May 29, 2022</time>
+</div>
+</header><h2 id=standalone>Standalone</h2>
+<p>To deploy standalone MongoDB using docker-compose you can follow instructions provided in <a href=https://hub.docker.com/_/mongo>MongoDB image on DockerHub</a>.</p>
+<p><strong>Result:</strong></p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;3.8&#34;</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>services</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>mongodb5-standalone</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>mongo:5.0</span><span class=w>
+</span><span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class=l>always</span><span class=w>
+</span><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=s2>&#34;27017:27017&#34;</span><span class=w>
+</span><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span><span class=nt>MONGO_INITDB_ROOT_USERNAME</span><span class=p>:</span><span class=w> </span><span class=l>root</span><span class=w>
+</span><span class=w>      </span><span class=nt>MONGO_INITDB_ROOT_PASSWORD</span><span class=p>:</span><span class=w> </span><span class=l>example</span><span class=w>
+</span></code></pre></div><p>After running <code>docker-compose up</code> on the yaml above, you should be able to connect to standalone MongoDB with uri:</p>
+<pre tabindex=0><code>mongodb://root:example@localhost:27017
+</code></pre><h2 id=sharded>Sharded</h2>
+<p>To deploy sharded MongoDB using docker-compose you can follow instructions provided in <a href=https://hub.docker.com/r/bitnami/mongodb-sharded/>Bitnami image for sharded MongoDB on DockerHub</a>.</p>
+<p><strong>Result:</strong></p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;3.8&#34;</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>services</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>mongodb5-sharded</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>hostname</span><span class=p>:</span><span class=w> </span><span class=l>mongodb5-sharded</span><span class=w>
+</span><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>docker.io/bitnami/mongodb-sharded:5.0</span><span class=w>
+</span><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_ADVERTISED_HOSTNAME=mongodb5-sharded</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_SHARDING_MODE=mongos</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_CFG_PRIMARY_HOST=mongodb-cfg</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_CFG_REPLICA_SET_NAME=cfgreplicaset</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_REPLICA_SET_KEY=replicasetkey123</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_ROOT_PASSWORD=password123</span><span class=w>
+</span><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=s2>&#34;27017:27017&#34;</span><span class=w>
+</span><span class=w>
+</span><span class=w>  </span><span class=nt>mongodb-shard0</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>hostname</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-shard0</span><span class=w>
+</span><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>docker.io/bitnami/mongodb-sharded:5.0</span><span class=w>
+</span><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_ADVERTISED_HOSTNAME=mongodb-shard0</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_SHARDING_MODE=shardsvr</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_MONGOS_HOST=mongodb5-sharded</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_ROOT_PASSWORD=password123</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_REPLICA_SET_MODE=primary</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_REPLICA_SET_KEY=replicasetkey123</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_REPLICA_SET_NAME=shard0</span><span class=w>
+</span><span class=w>    </span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=s1>&#39;shard0_data:/bitnami&#39;</span><span class=w>
+</span><span class=w>
+</span><span class=w>  </span><span class=nt>mongodb-cfg</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>hostname</span><span class=p>:</span><span class=w> </span><span class=l>mongodb-cfg</span><span class=w>
+</span><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>docker.io/bitnami/mongodb-sharded:5.0</span><span class=w>
+</span><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_ADVERTISED_HOSTNAME=mongodb-cfg</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_SHARDING_MODE=configsvr</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_ROOT_PASSWORD=password123</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_REPLICA_SET_MODE=primary</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_REPLICA_SET_KEY=replicasetkey123</span><span class=w>
+</span><span class=w>      </span>- <span class=l>MONGODB_REPLICA_SET_NAME=cfgreplicaset</span><span class=w>
+</span><span class=w>    </span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=s1>&#39;cfg_data:/bitnami&#39;</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>shard0_data</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>driver</span><span class=p>:</span><span class=w> </span><span class=l>local</span><span class=w>
+</span><span class=w>  </span><span class=nt>cfg_data</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>driver</span><span class=p>:</span><span class=w> </span><span class=l>local</span><span class=w>
+</span></code></pre></div><p>After running <code>docker-compose up</code> on the yaml above, you should be able to connect to sharded MongoDB with <a href=https://www.mongodb.com/docs/manual/sharding/#connecting-to-a-sharded-cluster>mongos</a> uri:</p>
+<pre tabindex=0><code>mongodb://root:password123@localhost:27017
+</code></pre><h2 id=replica-set>Replica set</h2>
+<p>To deploy replica set MongoDB using docker-compose you can follow instructions provided in <a href=https://www.sohamkamani.com/docker/mongo-replica-set/>Soham Kamani&rsquo;s article</a>. Unfortunately I had problems with starting original solution (because of no healtheckeck and missing <code>/etc/hosts</code> configuration).</p>
+<p><strong>Result after fixes:</strong></p>
+<div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nt>version</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;3.8&#34;</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>services</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>mongodb5-replicaset-1</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>hostname</span><span class=p>:</span><span class=w> </span><span class=l>mongodb5-replicaset-1</span><span class=w>
+</span><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>mongo:5.0</span><span class=w>
+</span><span class=w>    </span><span class=nt>expose</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=m>27017</span><span class=w>
+</span><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=s2>&#34;27017:27017&#34;</span><span class=w>
+</span><span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class=l>always</span><span class=w>
+</span><span class=w>    </span><span class=nt>command</span><span class=p>:</span><span class=w> </span><span class=l>mongod --port 27017 --replSet replicaSetName</span><span class=w>
+</span><span class=w>    </span><span class=nt>healthcheck</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span><span class=nt>test</span><span class=p>:</span><span class=w> </span><span class=l>echo &#39;db.runCommand(&#34;ping&#34;).ok&#39; | mongo localhost:27017/test --quiet</span><span class=w>
+</span><span class=w>      </span><span class=nt>interval</span><span class=p>:</span><span class=w> </span><span class=l>2s</span><span class=w>
+</span><span class=w>      </span><span class=nt>timeout</span><span class=p>:</span><span class=w> </span><span class=l>2s</span><span class=w>
+</span><span class=w>      </span><span class=nt>retries</span><span class=p>:</span><span class=w> </span><span class=m>5</span><span class=w>
+</span><span class=w>      </span><span class=nt>start_period</span><span class=p>:</span><span class=w> </span><span class=l>0s</span><span class=w>
+</span><span class=w>  </span><span class=nt>mongodb5-replicaset-2</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>hostname</span><span class=p>:</span><span class=w> </span><span class=l>mongodb5-replicaset-2</span><span class=w>
+</span><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>mongo:5.0</span><span class=w>
+</span><span class=w>    </span><span class=nt>expose</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=m>27018</span><span class=w>
+</span><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=s2>&#34;27018:27018&#34;</span><span class=w>
+</span><span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class=l>always</span><span class=w>
+</span><span class=w>    </span><span class=nt>command</span><span class=p>:</span><span class=w> </span><span class=l>mongod --port 27018 --replSet replicaSetName</span><span class=w>
+</span><span class=w>    </span><span class=nt>healthcheck</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span><span class=nt>test</span><span class=p>:</span><span class=w> </span><span class=l>echo &#39;db.runCommand(&#34;ping&#34;).ok&#39; | mongo localhost:27018/test --quiet</span><span class=w>
+</span><span class=w>      </span><span class=nt>interval</span><span class=p>:</span><span class=w> </span><span class=l>2s</span><span class=w>
+</span><span class=w>      </span><span class=nt>timeout</span><span class=p>:</span><span class=w> </span><span class=l>2s</span><span class=w>
+</span><span class=w>      </span><span class=nt>retries</span><span class=p>:</span><span class=w> </span><span class=m>5</span><span class=w>
+</span><span class=w>      </span><span class=nt>start_period</span><span class=p>:</span><span class=w> </span><span class=l>0s</span><span class=w>
+</span><span class=w>  </span><span class=nt>mongodb5-replicaset-3</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>hostname</span><span class=p>:</span><span class=w> </span><span class=l>mongodb5-replicaset-3</span><span class=w>
+</span><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>mongo:5.0</span><span class=w>
+</span><span class=w>    </span><span class=nt>expose</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=m>27019</span><span class=w>
+</span><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=s2>&#34;27019:27019&#34;</span><span class=w>
+</span><span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class=l>always</span><span class=w>
+</span><span class=w>    </span><span class=nt>command</span><span class=p>:</span><span class=w> </span><span class=l>mongod --port 27019 --replSet replicaSetName</span><span class=w>
+</span><span class=w>    </span><span class=nt>healthcheck</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span><span class=nt>test</span><span class=p>:</span><span class=w> </span><span class=l>echo &#39;db.runCommand(&#34;ping&#34;).ok&#39; | mongo localhost:27019/test --quiet</span><span class=w>
+</span><span class=w>      </span><span class=nt>interval</span><span class=p>:</span><span class=w> </span><span class=l>2s</span><span class=w>
+</span><span class=w>      </span><span class=nt>timeout</span><span class=p>:</span><span class=w> </span><span class=l>2s</span><span class=w>
+</span><span class=w>      </span><span class=nt>retries</span><span class=p>:</span><span class=w> </span><span class=m>5</span><span class=w>
+</span><span class=w>      </span><span class=nt>start_period</span><span class=p>:</span><span class=w> </span><span class=l>0s</span><span class=w>
+</span><span class=w>
+</span><span class=w>  </span><span class=nt>init-mongodb5-replicaset</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>mongo:5.0</span><span class=w>
+</span><span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;no&#34;</span><span class=w>
+</span><span class=w>    </span><span class=nt>depends_on</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span><span class=nt>mongodb5-replicaset-1</span><span class=p>:</span><span class=w>
+</span><span class=w>          </span><span class=nt>condition</span><span class=p>:</span><span class=w> </span><span class=l>service_healthy</span><span class=w>
+</span><span class=w>      </span><span class=nt>mongodb5-replicaset-2</span><span class=p>:</span><span class=w>
+</span><span class=w>          </span><span class=nt>condition</span><span class=p>:</span><span class=w> </span><span class=l>service_healthy</span><span class=w>
+</span><span class=w>      </span><span class=nt>mongodb5-replicaset-3</span><span class=p>:</span><span class=w>
+</span><span class=w>          </span><span class=nt>condition</span><span class=p>:</span><span class=w> </span><span class=l>service_healthy</span><span class=w>
+</span><span class=w>    </span><span class=nt>command</span><span class=p>:</span><span class=w> </span><span class=p>&gt;</span><span class=sd>
+</span><span class=sd>      mongo --host mongodb5-replicaset-1:27017 --eval &#39;
+</span><span class=sd>        db = (new Mongo(&#34;mongodb5-replicaset-1:27017&#34;)).getDB(&#34;test&#34;);
+</span><span class=sd>        config = {
+</span><span class=sd>            &#34;_id&#34; : &#34;replicaSetName&#34;,
+</span><span class=sd>            &#34;members&#34; : [
+</span><span class=sd>                {
+</span><span class=sd>                &#34;_id&#34; : 0,
+</span><span class=sd>                &#34;host&#34; : &#34;mongodb5-replicaset-1:27017&#34;
+</span><span class=sd>                },
+</span><span class=sd>                {
+</span><span class=sd>                &#34;_id&#34; : 1,
+</span><span class=sd>                &#34;host&#34; : &#34;mongodb5-replicaset-2:27018&#34;
+</span><span class=sd>                },
+</span><span class=sd>                {
+</span><span class=sd>                &#34;_id&#34; : 2,
+</span><span class=sd>                &#34;host&#34; : &#34;mongodb5-replicaset-3:27019&#34;
+</span><span class=sd>                }
+</span><span class=sd>            ]
+</span><span class=sd>        };
+</span><span class=sd>        rs.initiate(config);
+</span><span class=sd>      &#39;</span><span class=w>      
+</span></code></pre></div><p>To be able to connect to all members of replica set from your local machine, add these lines to <code>/etc/hosts</code>:</p>
+<pre tabindex=0><code>127.0.0.1   mongodb5-replicaset-1
+127.0.0.1   mongodb5-replicaset-2
+127.0.0.1   mongodb5-replicaset-3
+</code></pre><p>After running <code>docker-compose up</code> on the yaml above, you should be able to connect to replica set MongoDB with <a href=https://www.mongodb.com/docs/manual/reference/connection-string/#examples>mongod instances</a> uri:</p>
+<pre tabindex=0><code>mongodb://mongodb5-replicaset-1:27017,mongodb5-replicaset-2:27018,mongodb5-replicaset-3:27019/?replicaSet=replicaSetName
+</code></pre></article>
+</main><footer id=footer>
+Copyright © 2022 Szymon Marcinkiewicz
+</footer>
+</body>
+</html>

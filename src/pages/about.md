@@ -1,6 +1,6 @@
 ---
+layout: ../layouts/AboutLayout.astro
 title: "About me"
-draft: false
 ---
 
 Software engineer since 2017, currently working at [allegro.pl](https://allegro.pl). Working on highly-available and scalable backend applications using JVM. Coding mainly in Kotlin, Java, Scala and Groovy. Clean code, testing and functional programming enthusiast.

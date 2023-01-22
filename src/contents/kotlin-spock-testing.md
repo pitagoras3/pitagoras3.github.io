@@ -1,7 +1,15 @@
 ---
+author: Szymon Marcinkiewicz
+datetime: 2022-04-03T22:00:00Z
 title: "#1: Testing Kotlin with Spock - final drawbacks"
-date: 2022-04-03T22:00:00+02:00
+slug: kotlin-spock-testing
+featured: true
 draft: false
+tags:
+  - kotlin
+  - spock
+ogImage: ""
+description: How Kotlin's final classes affect testing with Spock
 ---
 
 Last time when I was writing unit tests in Spock for Kotlin application, I've faced interesting problem.

@@ -1,7 +1,15 @@
 ---
+author: Szymon Marcinkiewicz
+datetime: 2022-05-29T18:20:00Z
 title: "#2: MongoDB on docker-compose - standalone || sharded || replicaSet"
-date: 2022-05-29T18:20:00+02:00
+slug: mongodb-on-docker-compose
+featured: true
 draft: false
+tags:
+  - mongodb
+  - docker
+ogImage: ""
+description: How to setup standalone, sharded or replicaSet MongoDB using docker-compose.
 ---
 
 ## Standalone

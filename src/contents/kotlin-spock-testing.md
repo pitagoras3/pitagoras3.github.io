@@ -1,7 +1,7 @@
 ---
 author: Szymon Marcinkiewicz
 datetime: 2022-04-03T22:00:00Z
-title: "#1: Testing Kotlin with Spock - final drawbacks"
+title: "Testing Kotlin with Spock - final drawbacks"
 slug: kotlin-spock-testing
 featured: true
 draft: false

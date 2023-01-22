@@ -1,7 +1,7 @@
 ---
 author: Szymon Marcinkiewicz
 datetime: 2022-05-29T18:20:00Z
-title: "#2: MongoDB on docker-compose - standalone || sharded || replicaSet"
+title: "MongoDB on docker-compose - standalone || sharded || replicaSet"
 slug: mongodb-on-docker-compose
 featured: true
 draft: false
